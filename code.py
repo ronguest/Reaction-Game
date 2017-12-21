@@ -17,10 +17,19 @@ BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
 FAILURE_TONE = 50
 VICTORY_TONE = 500
+speed = {
+    1: 0.5,
+    2: 0.1,
+    3: 0.05,
+    4: 0.02,
+    5: 0.0
+}
 
 pixels = neopixel.NeoPixel(board.NEOPIXEL, 10, brightness=.2)
 pixels.fill(BLACK)
 pixels.show()
+
+difficulty = 1
 
 def game(delay):
     # Seed the random function with noise
@@ -39,6 +48,7 @@ def game(delay):
     # target is the LED the user needs to 'capture' to win
     target = random.randint(0, 9)
     print("Player target =",target+1)
+    print("Speed set to ", delay)
     #time.sleep(5)
 
     pixels.fill(BLACK)
@@ -83,9 +93,18 @@ while True:
     # Wait until player pushes button B before starting, flash blue while waiting
     while not cpx.button_b:
         pixels.fill(BLUE)
+        for i in range(difficulty):
+            pixels[i] = RED
+        if cpx.button_a:
+            if difficulty < 5:
+                difficulty += 1
+            else:
+                difficulty = 1
+            print("Difficulty set to", difficulty)
+            pixels[difficulty-1] = RED
         time.sleep(.3)
         pixels.fill(BLACK)
         time.sleep(.1)
     # Give player 1 second to get ready for the game to start
     time.sleep(1)
-    game(.05)
+    game(speed[difficulty])

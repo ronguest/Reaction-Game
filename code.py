@@ -42,7 +42,7 @@ def game(delay):
     #time.sleep(5)
 
     pixels.fill(BLACK)
-    # Keep cycling LEDS until the user touches A5
+    # Keep cycling LEDS until the user touches A7
     # Target LED is lit RED, others BLUE
     while True:
         for i in range(len(pixels)):
@@ -58,8 +58,8 @@ def game(delay):
 
             # Give the player time to react
             time.sleep(delay)
-            if cpx.touch_A5:
-                print("Player touched A5, i = ",i+1)
+            if cpx.touch_A7:
+                print("Player touched A7, i = ",i+1)
                 if i == target:
                     won()
                 else:

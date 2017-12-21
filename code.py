@@ -1,10 +1,9 @@
-# CircuitPlaygroundExpress_ReactionGame 
+# CircuitPlaygroundExpress_ReactionGame
 
 import board
 import neopixel
 import time
-import math
-import audiobusio
+from adafruit_circuitplayground.express import cpx
 
 RED = (0x10, 0, 0) # 0x100000 also works
 YELLOW=(0x10, 0x10, 0)
@@ -14,31 +13,43 @@ BLUE = (0, 0, 0x10)
 PURPLE = (0x10, 0, 0x10)
 BLACK = (0, 0, 0)
 WHITE = (255, 255, 255)
+FAILURE_TONE = 50
+VICTORY_TONE = 500
 
 pixels = neopixel.NeoPixel(board.NEOPIXEL, 10, brightness=.2)
 pixels.fill(BLACK)
 pixels.show()
 
-mic = audiobusio.PDMIn(board.MICROPHONE_CLOCK, board.MICROPHONE_DATA, frequency=16000)
-time.sleep(0.11)
-volume_sample = bytearray(120)
-mic.record(volume_sample, len(volume_sample))
-#print(volume_sample)
-input_floor = max(volume_sample) - min(volume_sample) +1
-print("Input floor: ", input_floor)
-
-while True:
+def game(delay):
     for i in range(len(pixels)):
         pixels[i] = BLACK
         if i == len(pixels)-1:
-            pixels[0] = GREEN
+            pixels[0] = PURPLE
         else:
-            pixels[i+1] = GREEN
-        # Sample audio for a bit.
-        mic.record(volume_sample, len(volume_sample))
-        #print(volume_sample)
-        magnitude = max(volume_sample) - min(volume_sample)
-        print(magnitude)
-        if magnitude > (input_floor + 30):
-            pixels.fill(RED)
-            time.sleep(5)
+            pixels[i+1] = PURPLE
+            time.sleep(delay)
+    won()
+
+def lost():
+    pixels.fill(RED)
+    cpx.play_tone(FAILURE_TONE, 1.5)
+    pixels.fill(BLACK)
+
+def won():
+    pixels.fill(GREEN)
+    cpx.play_tone(VICTORY_TONE, .3)
+    cpx.play_tone(1.5*VICTORY_TONE, .3)
+    cpx.play_tone(2*VICTORY_TONE, .3)
+    cpx.play_tone(2.5*VICTORY_TONE, .3)
+    pixels.fill(BLACK)
+
+while True:
+    while not cpx.button_b:
+        # Wait until player pushes button B before starting, flash blue while waiting
+        pixels.fill(BLUE)
+        time.sleep(.1)
+        pixels.fill(BLACK)
+        time.sleep(.1)
+    # Give player 1 second to get ready for the game to start
+    time.sleep(1)
+    game(.5)

@@ -1,4 +1,5 @@
 # CircuitPlaygroundExpress_ReactionGame
+# Author: Ron Guest
 
 import board
 import neopixel

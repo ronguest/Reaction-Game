@@ -28,32 +28,35 @@ def game(delay):
     a5 = AnalogIn(board.A5)
     a6 = AnalogIn(board.A6)
     a7 = AnalogIn(board.A7)
-
     seed  = a4.value
     seed += a5.value
     seed += a6.value
     seed += a7.value
-
     random.seed(seed)
 
     # The LEDs are 1..10 from a player's perspective
     # but 0..9 in terms of the pixels array index
+    # target is the LED the user needs to 'capture' to win
     target = random.randint(0, 9)
     print("Player target =",target+1)
     #time.sleep(5)
 
     pixels.fill(BLACK)
+    # Keep cycling LEDS until the user touches A5
+    # Target LED is lit RED, others BLUE
     while True:
         for i in range(len(pixels)):
             if i == target:
                 pixels[i] = RED
             else:
                 pixels[i] = BLUE
+            # Handle the edge case of 0 wrapping backwards to 9
             if i == 0:
                 pixels[len(pixels)-1] = BLACK
             else:
                 pixels[i-1] = BLACK
 
+            # Give the player time to react
             time.sleep(delay)
             if cpx.touch_A5:
                 print("Player touched A5, i = ",i+1)
@@ -77,8 +80,8 @@ def won():
     pixels.fill(BLACK)
 
 while True:
+    # Wait until player pushes button B before starting, flash blue while waiting
     while not cpx.button_b:
-        # Wait until player pushes button B before starting, flash blue while waiting
         pixels.fill(BLUE)
         time.sleep(.3)
         pixels.fill(BLACK)

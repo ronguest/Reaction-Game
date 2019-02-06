@@ -43,8 +43,10 @@ def game(delay):
 
     print("Range is ", range(cpx.pixels.n))
     print("Len of pixels is ", len(cpx.pixels))
+    # Set for single tap
+    cpx.detect_taps = 1
     cpx.pixels.fill(BLACK)
-    # Keep cycling LEDS until the user touches A7
+    # Keep cycling LEDS until the user taps CPx
     # Target LED is lit RED, others BLUE
     while True:
         for i in range(cpx.pixels.n):
@@ -60,8 +62,8 @@ def game(delay):
 
             # Give the player time to react
             time.sleep(delay)
-            if cpx.touch_A7:
-                print("Player touched A7, i = ",i+1)
+            if cpx.tapped:
+                print("Player tapped, i = ",i+1)
                 if i == target:
                     won()
                 else:

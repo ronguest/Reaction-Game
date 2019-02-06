@@ -29,20 +29,10 @@ speed = {
 cpx.pixels.fill(BLACK)
 cpx.pixels.show()
 
-difficulty = 2
+difficulty = 1
 
+# The game itself. Choose a random target LED, start spinning the red LED until users touches pad A7
 def game(delay):
-    # Seed the random function with noise
-    a4 = AnalogIn(board.A4)
-    a5 = AnalogIn(board.A5)
-    a6 = AnalogIn(board.A6)
-    a7 = AnalogIn(board.A7)
-    seed  = a4.value
-    seed += a5.value
-    seed += a6.value
-    seed += a7.value
-    random.seed(seed)
-
     # The LEDs are 1..10 from a player's perspective
     # but 0..9 in terms of the pixels array index
     # target is the LED the user needs to 'capture' to win
@@ -51,11 +41,13 @@ def game(delay):
     print("Speed set to ", delay)
     #time.sleep(5)
 
+    print("Range is ", range(cpx.pixels.n))
+    print("Len of pixels is ", len(cpx.pixels))
     cpx.pixels.fill(BLACK)
     # Keep cycling LEDS until the user touches A7
     # Target LED is lit RED, others BLUE
     while True:
-        for i in range(len(cpx.pixels)):
+        for i in range(cpx.pixels.n):
             if i == target:
                 cpx.pixels[i] = RED
             else:
@@ -89,12 +81,14 @@ def won():
     cpx.play_tone(2.5*VICTORY_TONE, .3)
     cpx.pixels.fill(BLACK)
 
+# Main loop of the game: bump difficulty setting if users presses A, start game when user presses B
 while True:
-    # Wait until player pushes button B before starting, flash blue while waiting
+    # Wait until player pushes button B before starting game, flash LEDs blue while waiting
     while not cpx.button_b:
         cpx.pixels.fill(BLUE)
         for i in range(difficulty):
             cpx.pixels[i] = RED
+        # 5 is max difficulty, wrap to difficulty one after that
         if cpx.button_a:
             if difficulty < 5:
                 difficulty += 1
@@ -103,6 +97,7 @@ while True:
             print("Difficulty set to", difficulty)
             cpx.pixels[difficulty-1] = RED
         time.sleep(.3)
+        # Fill "black" to turn them off momentarily for a flashing effect
         cpx.pixels.fill(BLACK)
         time.sleep(.1)
     # Give player 1 second to get ready for the game to start

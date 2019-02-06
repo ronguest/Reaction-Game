@@ -26,11 +26,10 @@ speed = {
     5: 0.0
 }
 
-pixels = neopixel.NeoPixel(board.NEOPIXEL, 10, brightness=.2)
-pixels.fill(BLACK)
-pixels.show()
+cpx.pixels.fill(BLACK)
+cpx.pixels.show()
 
-difficulty = 1
+difficulty = 2
 
 def game(delay):
     # Seed the random function with noise
@@ -52,20 +51,20 @@ def game(delay):
     print("Speed set to ", delay)
     #time.sleep(5)
 
-    pixels.fill(BLACK)
+    cpx.pixels.fill(BLACK)
     # Keep cycling LEDS until the user touches A7
     # Target LED is lit RED, others BLUE
     while True:
-        for i in range(len(pixels)):
+        for i in range(len(cpx.pixels)):
             if i == target:
-                pixels[i] = RED
+                cpx.pixels[i] = RED
             else:
-                pixels[i] = BLUE
+                cpx.pixels[i] = BLUE
             # Handle the edge case of 0 wrapping backwards to 9
             if i == 0:
-                pixels[len(pixels)-1] = BLACK
+                cpx.pixels[len(cpx.pixels)-1] = BLACK
             else:
-                pixels[i-1] = BLACK
+                cpx.pixels[i-1] = BLACK
 
             # Give the player time to react
             time.sleep(delay)
@@ -78,33 +77,33 @@ def game(delay):
                 return
 
 def lost():
-    pixels.fill(RED)
+    cpx.pixels.fill(RED)
     cpx.play_tone(FAILURE_TONE, 1.5)
-    pixels.fill(BLACK)
+    cpx.pixels.fill(BLACK)
 
 def won():
-    pixels.fill(GREEN)
+    cpx.pixels.fill(GREEN)
     cpx.play_tone(VICTORY_TONE, .3)
     cpx.play_tone(1.5*VICTORY_TONE, .3)
     cpx.play_tone(2*VICTORY_TONE, .3)
     cpx.play_tone(2.5*VICTORY_TONE, .3)
-    pixels.fill(BLACK)
+    cpx.pixels.fill(BLACK)
 
 while True:
     # Wait until player pushes button B before starting, flash blue while waiting
     while not cpx.button_b:
-        pixels.fill(BLUE)
+        cpx.pixels.fill(BLUE)
         for i in range(difficulty):
-            pixels[i] = RED
+            cpx.pixels[i] = RED
         if cpx.button_a:
             if difficulty < 5:
                 difficulty += 1
             else:
                 difficulty = 1
             print("Difficulty set to", difficulty)
-            pixels[difficulty-1] = RED
+            cpx.pixels[difficulty-1] = RED
         time.sleep(.3)
-        pixels.fill(BLACK)
+        cpx.pixels.fill(BLACK)
         time.sleep(.1)
     # Give player 1 second to get ready for the game to start
     time.sleep(1)

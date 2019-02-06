@@ -81,10 +81,12 @@ def won():
     cpx.play_tone(2.5*VICTORY_TONE, .3)
     cpx.pixels.fill(BLACK)
 
-# Main loop of the game: bump difficulty setting if users presses A, start game when user presses B
+# Main loop of the game: bump difficulty setting if users presses A, taps CPx
 while True:
-    # Wait until player pushes button B before starting game, flash LEDs blue while waiting
-    while not cpx.button_b:
+    # Set for single tap
+    cpx.detect_taps = 1
+    # Wait until player taps CPx before starting game, flash LEDs blue while waiting
+    while not cpx.tapped:
         cpx.pixels.fill(BLUE)
         for i in range(difficulty):
             cpx.pixels[i] = RED
